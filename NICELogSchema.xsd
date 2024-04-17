@@ -1,20 +1,21 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
         <!-- List types -->
-  <xs:complexType name= "EventsList">
+	
+	<xs:complexType name= "EventsList">
 		<xs:choice minOccurs= "1" maxOccurs= "unbounded">			
-      <xs:element name= "IoTEvent" type= "IoTEvent" maxOccurs= "unbounded"/>
-      <xs:element name= "ContextEvent" type= "ContextEvent" maxOccurs="unbounded"/>
-      <xs:element name= "ProcessEvent" type= "ProcessEvent" maxOccurs="unbounded"/>
+			<xs:element name= "IoTEvent" type= "IoTEvent" maxOccurs= "unbounded"/>
+			<xs:element name= "ContextEvent" type= "ContextEvent" maxOccurs="unbounded"/>
+			<xs:element name= "ProcessEvent" type= "ProcessEvent" maxOccurs="unbounded"/>
 		</xs:choice>
 	</xs:complexType>
 
 	<xs:complexType name= "ObjectsList">		
-    <xs:choice minOccurs= "1" maxOccurs= "unbounded">
-      <xs:element name= "Object" type= "Object" minOccurs= "0" maxOccurs="unbounded"/>
-      <xs:element name= "FeatureOfInterest" type= "FeatureOfInterest" minOccurs= "0" maxOccurs="unbounded"/>
-      <xs:element name= "DigitalObject" type= "DigitalObject" minOccurs= "0" maxOccurs="unbounded"/>
-    </xs:choice>
+		<xs:choice minOccurs= "1" maxOccurs= "unbounded">
+			<xs:element name= "Object" type= "Object" minOccurs= "0" maxOccurs="unbounded"/>
+			<xs:element name= "FeatureOfInterest" type= "FeatureOfInterest" minOccurs= "0" maxOccurs="unbounded"/>
+			<xs:element name= "DigitalObject" type= "DigitalObject" minOccurs= "0" maxOccurs="unbounded"/>
+		</xs:choice>
 	</xs:complexType>
 
 	<xs:complexType name= "DataSourcesList">
@@ -26,112 +27,112 @@
 
         <!-- Event types -->
 
-  <xs:complexType name="Event">
+	<xs:complexType name="Event">
 		<xs:attribute name= "ID" type= "xs:string" />
 		<xs:attribute name="timestamp" type="xs:dateTime"/> 
 		<xs:attribute name= "value" type= "xs:string"/>
 	</xs:complexType>
 
 	<xs:complexType name= "ProcessEvent">
-    <xs:complexContent>
-  	  <xs:extension base= "Event">
-        <xs:sequence>
-  		    <xs:choice minOccurs= "1" maxOccurs= "unbounded">
-            <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
-            <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
-            <xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
-          </xs:choice>      
-          <xs:choice>
-            <xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
-            <xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
-          </xs:choice>
-        </xs:sequence>
-		  <xs:attribute name= "label" type= "xs:string"/> <!-- activity label -->
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-  <xs:complexType name= "ContextEvent">
 		<xs:complexContent>
 			<xs:extension base= "Event">
-    <xs:sequence>
-      <xs:choice minOccurs= "1" maxOccurs= "unbounded">
-        <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
-        <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
-        <xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
-      </xs:choice>
-  		<xs:choice>
-  			<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
-  			<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
-  		</xs:choice>
-    </xs:sequence>
-      <xs:attribute name= "impactsObservablePropertyInObject" type= "xs:string" /> 
-      <xs:attribute name= "impactsObservablePropertyInFeatureOfInterest" type= "xs:string" /> 
-      <xs:attribute name= "impactsDigitalPropertyInObject" type= "xs:string" />
-      <xs:attribute name= "impactsDigitalPropertyInDigitalObject" type= "xs:string" /> 
+				<xs:sequence>
+					<xs:choice minOccurs= "1" maxOccurs= "unbounded">
+						<xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+						<xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+						<xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
+					</xs:choice>      
+					<xs:choice>
+						<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute name= "label" type= "xs:string"/> <!-- activity label -->
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
-  <xs:complexType name="EventObjectRelationship">
+	<xs:complexType name= "ContextEvent">
+		<xs:complexContent>
+			<xs:extension base= "Event">
+				<xs:sequence>
+					<xs:choice minOccurs= "1" maxOccurs= "unbounded">
+						<xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+						<xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+						<xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
+					</xs:choice>
+					<xs:choice>
+						<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute name= "impactsObservablePropertyInObject" type= "xs:string" /> 
+				<xs:attribute name= "impactsObservablePropertyInFeatureOfInterest" type= "xs:string" /> 
+				<xs:attribute name= "impactsDigitalPropertyInObject" type= "xs:string" />
+				<xs:attribute name= "impactsDigitalPropertyInDigitalObject" type= "xs:string" /> 
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="EventObjectRelationship">
 		<xs:attribute name= "objectID" type= "xs:string" />
 	</xs:complexType>
 
-  <xs:complexType name="EventFeatureOfInterestRelationship">
+	<xs:complexType name="EventFeatureOfInterestRelationship">
 		<xs:attribute name= "objectID" type= "xs:string" />
 	</xs:complexType>
   
-  <xs:complexType name="EventDigitalObjectRelationship">
+	<xs:complexType name="EventDigitalObjectRelationship">
 		<xs:attribute name= "objectID" type= "xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="IoTEvent">
 		<xs:complexContent>
 			<xs:extension base= "Event">
-        <xs:sequence>
-				  <xs:choice minOccurs= "1" maxOccurs= "unbounded">
-            <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
-            <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
-          </xs:choice>
-				  <xs:choice>
+				<xs:sequence>
+					<xs:choice minOccurs= "1" maxOccurs= "unbounded">
+						<xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+						<xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+					</xs:choice>
+					<xs:choice>
 						<xs:element name= "Observation" type="Observation" minOccurs="0" maxOccurs= "1"/>
 						<xs:element name= "derivedFromAnalytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
 					</xs:choice>
-				</xs:sequence>                       
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
         <!-- Object types -->
 
-  <xs:complexType name= "Object">
-    <xs:choice maxOccurs= "unbounded">
-		  <xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
-      <xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+	<xs:complexType name= "Object">
+		<xs:choice maxOccurs= "unbounded">
+			<xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+			<xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/>
 		</xs:choice>
-    <xs:attribute name= "objectType" type= "xs:string"/>
+		<xs:attribute name= "objectType" type= "xs:string"/>
 		<xs:attribute name= "ID" type= "xs:string" />
 	</xs:complexType>
 
-   <xs:complexType name= "FeatureOfInterest">
+	<xs:complexType name= "FeatureOfInterest">
 		<xs:complexContent>
 			<xs:restriction base= "Object">
 				<xs:sequence>
 					<xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
 				</xs:sequence>
-        <xs:attribute name= "objectType" type= "xs:string"/> 
+				<xs:attribute name= "objectType" type= "xs:string"/> 
 				<xs:attribute name= "ID" type= "xs:string" /> 
 			</xs:restriction>
 		</xs:complexContent>
 	</xs:complexType>
-
+	
 	<xs:complexType name= "DigitalObject">
 		<xs:complexContent>
 			<xs:restriction base= "Object">
 				<xs:sequence>
 					<xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/> 
 				</xs:sequence>
-        <xs:attribute name= "objectType" type= "xs:string"/> 
+				<xs:attribute name= "objectType" type= "xs:string"/> 
 				<xs:attribute name= "ID" type= "xs:string" /> 
 			</xs:restriction>
 		</xs:complexContent>
@@ -139,18 +140,18 @@
 
         <!-- Data source types -->
 
-  <xs:complexType name= "DataSource">
+	<xs:complexType name= "DataSource">
 		<xs:sequence>
 			<xs:element name="metadata" type="xs:string" /> <!-- link to SOSA for metadata? -->
 			<!-- # properties unbounded here, but actually exactly 1 for sensors and unbounded for PAIS -->
 		</xs:sequence>
 		<xs:attribute name= "ID" type= "xs:string"/>
 	</xs:complexType>
-
+	
 	<xs:complexType name= "Sensor">
 		<xs:complexContent>
 			<xs:extension base= "DataSource">
-			  <xs:attribute name= "location" type= "xs:string"/>
+			<xs:attribute name= "location" type= "xs:string"/>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -171,7 +172,7 @@
 		<xs:attribute name= "initValue" type= "xs:string"/>
 	</xs:complexType>
 
-  <xs:complexType name= "ObservableProperty">
+	<xs:complexType name= "ObservableProperty">
 		<xs:complexContent>
 			<xs:extension base= "Property">
 				<xs:attribute name= "monitoredBySensor" type= "xs:string"/> <!-- refer to sensor -->
@@ -179,7 +180,7 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-  <xs:complexType name= "DigitalProperty">
+	<xs:complexType name= "DigitalProperty">
 		<xs:complexContent>
 			<xs:extension base= "Property">
 				<xs:attribute name= "monitoredByPAIS" type= "xs:string"/> <!-- refer to PAIS -->
@@ -189,7 +190,7 @@
 
         <!-- Data entry types -->
 
-  <xs:complexType name= "DataEntry">
+	<xs:complexType name= "DataEntry">
 		<xs:attribute name= "timestamp" type="xs:dateTime"/>
 		<xs:attribute name= "value" type= "xs:string"/>
 	</xs:complexType>
@@ -211,12 +212,12 @@
 	<xs:complexType name= "ISDataEntry">
 		<xs:complexContent>
 			<xs:extension base="DataEntry">
-     	  <xs:choice minOccurs= "0"> <!-- choice between digitalObject and objectID is to deal with hybrid objects -->
-          <xs:element name= "DigitalObject" type= "xs:string" maxOccurs= "unbounded"/>
-          <xs:element name= "Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
-        </xs:choice>
-        <xs:attribute name= "PAIS" type= "xs:string" />
-			  <xs:attribute name= "digitalProperty" type= "xs:string" />
+				<xs:choice minOccurs= "0"> <!-- choice between digitalObject and objectID is to deal with hybrid objects -->
+					<xs:element name= "DigitalObject" type= "xs:string" maxOccurs= "unbounded"/>
+					<xs:element name= "Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
+		        	</xs:choice>
+        			<xs:attribute name= "PAIS" type= "xs:string" />
+				<xs:attribute name= "digitalProperty" type= "xs:string" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -244,14 +245,14 @@
 
 <!-- ________________ MAIN EVENT LOG ELEMENT ____________________ -->
 
-    <xs:element name= "EventLog">
-  		<xs:complexType>
-        <xs:sequence>
-          <xs:element name= "ObjectsList" type= "ObjectsList"/>
-          <xs:element name= "DataSourcesList" type= "DataSourcesList"/>
-          <xs:element name= "EventsList" type= "EventsList"/>
-        </xs:sequence>				
-      </xs:complexType>
+	<xs:element name= "EventLog">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name= "ObjectsList" type= "ObjectsList"/>
+				<xs:element name= "DataSourcesList" type= "DataSourcesList"/>
+				<xs:element name= "EventsList" type= "EventsList"/>
+			</xs:sequence>				
+		</xs:complexType>
 		
 		<!-- KEYS DEFINITION -->
 		
@@ -326,7 +327,7 @@
 		
 		<!-- KEYS REFERENCES DEFINITION -->
 
-    <!-- naming convention: referringElementReferredElementInParentElementRef -->
+		<!-- naming convention: referringElementReferredElementInParentElementRef -->
 		<!-- example: contextEventObservablePropertyInObjectIDRef -->
 		<!-- this means: the observable property contained in an object referred to by a context event (needs to correspond to an existing observable property) -->
 

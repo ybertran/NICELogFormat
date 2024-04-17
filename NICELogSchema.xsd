@@ -1,0 +1,474 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+        <!-- List types -->
+  <xs:complexType name= "EventsList">
+		<xs:choice minOccurs= "1" maxOccurs= "unbounded">			
+      <xs:element name= "IoTEvent" type= "IoTEvent" maxOccurs= "unbounded"/>
+      <xs:element name= "ContextEvent" type= "ContextEvent" maxOccurs="unbounded"/>
+      <xs:element name= "ProcessEvent" type= "ProcessEvent" maxOccurs="unbounded"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name= "ObjectsList">		
+    <xs:choice minOccurs= "1" maxOccurs= "unbounded">
+      <xs:element name= "Object" type= "Object" minOccurs= "0" maxOccurs="unbounded"/>
+      <xs:element name= "FeatureOfInterest" type= "FeatureOfInterest" minOccurs= "0" maxOccurs="unbounded"/>
+      <xs:element name= "DigitalObject" type= "DigitalObject" minOccurs= "0" maxOccurs="unbounded"/>
+    </xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name= "DataSourcesList">
+		<xs:choice minOccurs= "1" maxOccurs= "unbounded">
+			<xs:element name= "Sensor" type= "Sensor" minOccurs= "0" maxOccurs="unbounded"/>
+			<xs:element name= "PAIS" type= "PAIS" minOccurs= "0" maxOccurs="unbounded"/>
+		</xs:choice>
+	</xs:complexType>
+
+        <!-- Event types -->
+
+  <xs:complexType name="Event">
+		<xs:attribute name= "ID" type= "xs:string" />
+		<xs:attribute name="timestamp" type="xs:dateTime"/> 
+		<xs:attribute name= "value" type= "xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name= "ProcessEvent">
+    <xs:complexContent>
+  	  <xs:extension base= "Event">
+        <xs:sequence>
+  		    <xs:choice minOccurs= "1" maxOccurs= "unbounded">
+            <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+            <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+            <xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
+          </xs:choice>      
+          <xs:choice>
+            <xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+            <xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
+          </xs:choice>
+        </xs:sequence>
+		  <xs:attribute name= "label" type= "xs:string"/> <!-- activity label -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name= "ContextEvent">
+		<xs:complexContent>
+			<xs:extension base= "Event">
+    <xs:sequence>
+      <xs:choice minOccurs= "1" maxOccurs= "unbounded">
+        <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+        <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+        <xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
+      </xs:choice>
+  		<xs:choice>
+  			<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+  			<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
+  		</xs:choice>
+    </xs:sequence>
+      <xs:attribute name= "impactsObservablePropertyInObject" type= "xs:string" /> 
+      <xs:attribute name= "impactsObservablePropertyInFeatureOfInterest" type= "xs:string" /> 
+      <xs:attribute name= "impactsDigitalPropertyInObject" type= "xs:string" />
+      <xs:attribute name= "impactsDigitalPropertyInDigitalObject" type= "xs:string" /> 
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="EventObjectRelationship">
+		<xs:attribute name= "objectID" type= "xs:string" />
+	</xs:complexType>
+
+  <xs:complexType name="EventFeatureOfInterestRelationship">
+		<xs:attribute name= "objectID" type= "xs:string" />
+	</xs:complexType>
+  
+  <xs:complexType name="EventDigitalObjectRelationship">
+		<xs:attribute name= "objectID" type= "xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="IoTEvent">
+		<xs:complexContent>
+			<xs:extension base= "Event">
+        <xs:sequence>
+				  <xs:choice minOccurs= "1" maxOccurs= "unbounded">
+            <xs:element name="EventObjectRelationship" type="EventObjectRelationship" />
+            <xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
+          </xs:choice>
+				  <xs:choice>
+						<xs:element name= "Observation" type="Observation" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "derivedFromAnalytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+					</xs:choice>
+				</xs:sequence>                       
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+        <!-- Object types -->
+
+  <xs:complexType name= "Object">
+    <xs:choice maxOccurs= "unbounded">
+		  <xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+      <xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+		</xs:choice>
+    <xs:attribute name= "objectType" type= "xs:string"/>
+		<xs:attribute name= "ID" type= "xs:string" />
+	</xs:complexType>
+
+   <xs:complexType name= "FeatureOfInterest">
+		<xs:complexContent>
+			<xs:restriction base= "Object">
+				<xs:sequence>
+					<xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+				</xs:sequence>
+        <xs:attribute name= "objectType" type= "xs:string"/> 
+				<xs:attribute name= "ID" type= "xs:string" /> 
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name= "DigitalObject">
+		<xs:complexContent>
+			<xs:restriction base= "Object">
+				<xs:sequence>
+					<xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/> 
+				</xs:sequence>
+        <xs:attribute name= "objectType" type= "xs:string"/> 
+				<xs:attribute name= "ID" type= "xs:string" /> 
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+        <!-- Data source types -->
+
+  <xs:complexType name= "DataSource">
+		<xs:sequence>
+			<xs:element name="metadata" type="xs:string" /> <!-- link to SOSA for metadata? -->
+			<!-- # properties unbounded here, but actually exactly 1 for sensors and unbounded for PAIS -->
+		</xs:sequence>
+		<xs:attribute name= "ID" type= "xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name= "Sensor">
+		<xs:complexContent>
+			<xs:extension base= "DataSource">
+			  <xs:attribute name= "location" type= "xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name= "PAIS">
+		<xs:complexContent>
+			<xs:extension base= "DataSource">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+        <!-- Property types -->
+
+	<xs:complexType name= "Property">
+		<xs:attribute name= "ID" type= "xs:string"/>
+		<xs:attribute name= "propertyName" type= "xs:string"/>
+		<xs:attribute name= "dataType" type= "xs:string"/>
+		<xs:attribute name= "initValue" type= "xs:string"/>
+	</xs:complexType>
+
+  <xs:complexType name= "ObservableProperty">
+		<xs:complexContent>
+			<xs:extension base= "Property">
+				<xs:attribute name= "monitoredBySensor" type= "xs:string"/> <!-- refer to sensor -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name= "DigitalProperty">
+		<xs:complexContent>
+			<xs:extension base= "Property">
+				<xs:attribute name= "monitoredByPAIS" type= "xs:string"/> <!-- refer to PAIS -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+        <!-- Data entry types -->
+
+  <xs:complexType name= "DataEntry">
+		<xs:attribute name= "timestamp" type="xs:dateTime"/>
+		<xs:attribute name= "value" type= "xs:string"/>
+	</xs:complexType>
+	
+	<xs:complexType name= "Observation">
+		<xs:complexContent>
+			<xs:extension base="DataEntry">
+				<xs:choice minOccurs= "0"> <!-- choice between FoI and objectID is to deal with hybrid objects -->
+					<xs:element name= "FeatureOfInterest" type= "xs:string" maxOccurs= "unbounded"/>
+					<xs:element name="Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
+				</xs:choice>
+				<xs:attribute name= "sensor" type= "xs:string" />
+				<xs:attribute name= "observablePropertyInObject" type= "xs:string"/>
+				<xs:attribute name= "observablePropertyInFeatureOfInterest" type= "xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name= "ISDataEntry">
+		<xs:complexContent>
+			<xs:extension base="DataEntry">
+     	  <xs:choice minOccurs= "0"> <!-- choice between digitalObject and objectID is to deal with hybrid objects -->
+          <xs:element name= "DigitalObject" type= "xs:string" maxOccurs= "unbounded"/>
+          <xs:element name= "Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
+        </xs:choice>
+        <xs:attribute name= "PAIS" type= "xs:string" />
+			  <xs:attribute name= "digitalProperty" type= "xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+        <!-- Analytics and subelements types -->
+
+	<xs:complexType name= "Analytics">
+		<xs:sequence>
+			<xs:element name= "AnalysesEvent" type= "xs:string" maxOccurs= "unbounded"/> <!-- points to IoT events -->
+			<xs:element name= "Method" type= "Method" maxOccurs= "unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name= "Method">
+		<xs:sequence>
+			<xs:element name= "Parameter" type= "Parameter"/> <!-- list of parameters and parameterValues; # of lists == # of methods -->
+		</xs:sequence>
+		<xs:attribute name= "name" type= "xs:string"/>
+	</xs:complexType>
+	
+	<xs:complexType name= "Parameter">
+		<xs:attribute name= "name" type= "xs:string"/>
+		<xs:attribute name= "value" type= "xs:string"/>
+	</xs:complexType>
+
+<!-- ________________ MAIN EVENT LOG ELEMENT ____________________ -->
+
+    <xs:element name= "EventLog">
+  		<xs:complexType>
+        <xs:sequence>
+          <xs:element name= "ObjectsList" type= "ObjectsList"/>
+          <xs:element name= "DataSourcesList" type= "DataSourcesList"/>
+          <xs:element name= "EventsList" type= "EventsList"/>
+        </xs:sequence>				
+      </xs:complexType>
+		
+		<!-- KEYS DEFINITION -->
+		
+		<!-- Object keys -->
+
+		<xs:key name= "objectIDKey">
+			<xs:selector xpath= ".//ObjectsList/Object"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "featureOfInterestIDKey">
+			<xs:selector xpath= ".//ObjectsList/FeatureOfInterest"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+		
+		<xs:key name= "digitalObjectIDKey">
+			<xs:selector xpath= ".//ObjectsList/DigitalObject"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+		
+		<!-- Event keys -->
+		
+		<xs:key name= "IoTEventIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "contextEventIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "processEventIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+		
+		<!-- Data source keys -->
+		
+		<xs:key name= "sensorIDKey">
+			<xs:selector xpath= ".//DataSourcesList/Sensor"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+	
+		<xs:key name= "PAISIDKey">
+			<xs:selector xpath= ".//DataSourcesList/PAIS"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+		
+		<!-- Property keys -->
+
+		<xs:key name= "observablePropertyInObjectIDKey">
+			<xs:selector xpath= ".//ObjectsList/Object/ObservableProperty"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "observablePropertyInFeatureOfInterestIDKey">
+			<xs:selector xpath= ".//ObjectsList/FeatureOfInterest/ObservableProperty"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "digitalPropertyInObjectIDKey">
+			<xs:selector xpath= ".//ObjectsList/Object/DigitalProperty"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+
+		<xs:key name= "digitalPropertyInDigitalObjectIDKey">
+			<xs:selector xpath= ".//ObjectsList/DigitalObject/DigitalProperty"/>
+			<xs:field xpath="@ID"/>
+		</xs:key>
+		
+		
+		<!-- KEYS REFERENCES DEFINITION -->
+
+    <!-- naming convention: referringElementReferredElementInParentElementRef -->
+		<!-- example: contextEventObservablePropertyInObjectIDRef -->
+		<!-- this means: the observable property contained in an object referred to by a context event (needs to correspond to an existing observable property) -->
+
+
+		<!-- Event-object constraints -->
+		
+		<xs:keyref name= "processEventObjectIDRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/EventObjectRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "processEventFeatureOfInterestIDRef" refer= "featureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/EventFeatureOfInterestRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "processEventDigitalObjectIDRef" refer= "digitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/EventDigitalObjectRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+
+		<xs:keyref name= "contextEventObjectIDRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/EventObjectRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "contextEventFeatureOfInterestIDRef" refer= "featureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/EventFeatureOfInterestRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "contextEventDigitalObjectIDRef" refer= "digitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/EventDigitalObjectRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+
+		<xs:keyref name= "IoTEventObjectIDRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/EventObjectRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "IoTEventFeatureOfInterestIDRef" refer= "featureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/EventFeatureOfInterestRelationship" />
+			<xs:field xpath= "@objectID"/>
+		</xs:keyref>
+		
+
+		<!-- Event-property constraints -->
+
+		<xs:keyref name= "contextEventObservablePropertyInObjectIDRef" refer= "observablePropertyInObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent" />
+			<xs:field xpath= "@impactsObservablePropertyInObject"/>
+		</xs:keyref>
+
+		<xs:keyref name= "contextEventObservablePropertyInFeatureOfInterestIDRef" refer= "observablePropertyInFeatureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent" />
+			<xs:field xpath= "@impactsObservablePropertyInFeatureOfInterest"/>
+		</xs:keyref>
+              
+		<xs:keyref name= "contextEventDigitalPropertyInObjectIDRef" refer= "digitalPropertyInObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent" />
+			<xs:field xpath= "@impactsDigitalPropertyInObject"/>
+		</xs:keyref>
+
+		<xs:keyref name= "contextEventDigitalPropertyInDigitalObjectIDRef" refer= "digitalPropertyInDigitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent" />
+			<xs:field xpath= "@impactsDigitalPropertyInDigitalObject"/>
+		</xs:keyref>
+
+		<!-- <xs:keyref name= "IoTEventObservablePropertyInObjectIDRef" refer= "observablePropertyInObjectIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent" />
+			<xs:field xpath= "@impactsObservablePropertyInObject"/>
+		</xs:keyref>
+
+		<xs:keyref name= "IoTEventObservablePropertyInFeatureOfInterestIDRef" refer= "observablePropertyInFeatureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent" />
+			<xs:field xpath= "@impactsObservablePropertyInFeatureOfInterest"/>
+		</xs:keyref> -->
+
+
+		<!-- Analytics-event constraints -->
+
+		<xs:keyref name= "analyticsIoTEventIDRef" refer= "IoTEventIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Analytics/AnalysesEvent" />
+			<xs:field xpath= ".//AnalysesEvent"/>
+		</xs:keyref>
+
+		<xs:keyref name= "analyticsContextEventIDRef" refer= "IoTEventIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/Analytics/AnalysesEvent" />
+			<xs:field xpath= ".//AnalysesEvent"/>
+		</xs:keyref>
+
+		<xs:keyref name= "analyticsProcessEventIDRef" refer= "IoTEventIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/Analytics/AnalysesEvent" />
+			<xs:field xpath= ".//AnalysesEvent"/>
+		</xs:keyref>
+
+
+		<!-- Data entry-data source constraints -->
+
+		<xs:keyref name= "observationSensorIDRef" refer= "sensorIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Observation" />
+			<xs:field xpath= "@sensor"/>
+		</xs:keyref>
+
+		<xs:keyref name= "ISDEPAISInContextEventIDRef" refer= "PAISIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/ISDataEntry" />
+			<xs:field xpath= "@PAIS"/>
+		</xs:keyref>
+
+		<xs:keyref name= "ISDEPAISInProcessEventIDRef" refer= "PAISIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/ISDataEntry" />
+			<xs:field xpath= "@PAIS"/>
+		</xs:keyref>
+
+
+		<!-- Data entry-property constraints -->
+
+		<xs:keyref name= "observationObservablePropertyInObjectIDRef" refer= "observablePropertyInObjectIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Observation" />
+			<xs:field xpath= "@observablePropertyInObject"/>
+		</xs:keyref>
+
+		<xs:keyref name= "observationObservablePropertyInFeatureOfInterestIDRef" refer= "observablePropertyInFeatureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Observation" />
+			<xs:field xpath= "@observablePropertyInFeatureOfInterest"/>
+		</xs:keyref>
+
+		<xs:keyref name= "ISDEInContextEventDigitalPropertyInObjectIDRef" refer= "digitalPropertyInObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/ISDataEntry" />
+			<xs:field xpath= "@digitalPropertyInObject"/>
+		</xs:keyref>
+
+		<xs:keyref name= "ISDEInContextEventDigitalPropertyInDigitalObjectIDRef" refer= "digitalPropertyInDigitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/ISDataEntry" />
+			<xs:field xpath= "@digitalPropertyInDigitalObject"/>
+		</xs:keyref>
+
+		<!-- <xs:keyref name= "ISDEPAISInProcessEventIDRef" refer= "PAISIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/ISDataEntry" />
+			<xs:field xpath= "@PAIS"/>
+		</xs:keyref> -->
+
+	</xs:element>
+</xs:schema>

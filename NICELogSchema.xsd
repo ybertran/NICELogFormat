@@ -4,9 +4,9 @@
 	
 	<xs:complexType name= "EventsList">
 		<xs:choice minOccurs= "1" maxOccurs= "unbounded">			
-			<xs:element name= "IoTEvent" type= "IoTEvent" maxOccurs= "unbounded"/>
-			<xs:element name= "ContextEvent" type= "ContextEvent" maxOccurs="unbounded"/>
-			<xs:element name= "ProcessEvent" type= "ProcessEvent" maxOccurs="unbounded"/>
+			<xs:element name= "IoTEvent" type= "IoTEvent" minOccurs= "0" maxOccurs= "unbounded"/>
+			<xs:element name= "ContextEvent" type= "ContextEvent" minOccurs= "0" maxOccurs="unbounded"/>
+			<xs:element name= "ProcessEvent" type= "ProcessEvent" minOccurs= "0" maxOccurs="unbounded"/>
 		</xs:choice>
 	</xs:complexType>
 
@@ -43,7 +43,7 @@
 						<xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
 					</xs:choice>      
 					<xs:choice>
-						<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "Analytics" type="Analytics" maxOccurs= "1"/>
 						<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
 					</xs:choice>
 				</xs:sequence>
@@ -62,7 +62,7 @@
 						<xs:element name="EventDigitalObjectRelationship" type="EventDigitalObjectRelationship" />
 					</xs:choice>
 					<xs:choice>
-						<xs:element name= "Analytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "Analytics" type="Analytics" maxOccurs= "1"/>
 						<xs:element name= "ISDataEntry" type= "ISDataEntry" maxOccurs= "1"/>
 					</xs:choice>
 				</xs:sequence>
@@ -95,8 +95,8 @@
 						<xs:element name="EventFeatureOfInterestRelationship" type="EventFeatureOfInterestRelationship"/>
 					</xs:choice>
 					<xs:choice>
-						<xs:element name= "Observation" type="Observation" minOccurs="0" maxOccurs= "1"/>
-						<xs:element name= "derivedFromAnalytics" type="Analytics" minOccurs="0" maxOccurs= "1"/>
+						<xs:element name= "Observation" type="Observation" maxOccurs= "1"/>
+						<xs:element name= "Analytics" type="Analytics" maxOccurs= "1"/>
 					</xs:choice>
 				</xs:sequence>
 			</xs:extension>
@@ -107,8 +107,8 @@
 
 	<xs:complexType name= "Object">
 		<xs:choice maxOccurs= "unbounded">
-			<xs:element name= "ObservableProperty" type= "ObservableProperty" minOccurs= "0" maxOccurs= "unbounded"/>
-			<xs:element name= "DigitalProperty" type= "DigitalProperty" minOccurs= "0" maxOccurs= "unbounded"/>
+			<xs:element name= "ObservableProperty" type= "ObservableProperty" />
+			<xs:element name= "DigitalProperty" type= "DigitalProperty" />
 		</xs:choice>
 		<xs:attribute name= "objectType" type= "xs:string"/>
 		<xs:attribute name= "ID" type= "xs:string" />
@@ -143,7 +143,6 @@
 	<xs:complexType name= "DataSource">
 		<xs:sequence>
 			<xs:element name="metadata" type="xs:string" /> <!-- link to SOSA for metadata? -->
-			<!-- # properties unbounded here, but actually exactly 1 for sensors and unbounded for PAIS -->
 		</xs:sequence>
 		<xs:attribute name= "ID" type= "xs:string"/>
 	</xs:complexType>
@@ -198,9 +197,9 @@
 	<xs:complexType name= "Observation">
 		<xs:complexContent>
 			<xs:extension base="DataEntry">
-				<xs:choice minOccurs= "0"> <!-- choice between FoI and objectID is to deal with hybrid objects -->
-					<xs:element name= "FeatureOfInterest" type= "xs:string" maxOccurs= "unbounded"/>
-					<xs:element name="Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
+				<xs:choice> <!-- choice between FoI and objectID is to deal with hybrid objects -->
+					<xs:element name= "FeatureOfInterest" type= "xs:string" />
+					<xs:element name="Object" type="xs:string" />
 				</xs:choice>
 				<xs:attribute name= "sensor" type= "xs:string" />
 				<xs:attribute name= "observablePropertyInObject" type= "xs:string"/>
@@ -212,11 +211,11 @@
 	<xs:complexType name= "ISDataEntry">
 		<xs:complexContent>
 			<xs:extension base="DataEntry">
-				<xs:choice minOccurs= "0"> <!-- choice between digitalObject and objectID is to deal with hybrid objects -->
-					<xs:element name= "DigitalObject" type= "xs:string" maxOccurs= "unbounded"/>
-					<xs:element name= "Object" type="xs:string" minOccurs="1" maxOccurs= "unbounded"/>
-		        	</xs:choice>
-        			<xs:attribute name= "PAIS" type= "xs:string" />
+				<xs:choice maxOccurs= "unbounded"> <!-- choice between digitalObject and objectID is to deal with hybrid objects -->
+					<xs:element name= "DigitalObject" type= "xs:string" />
+					<xs:element name= "Object" type="xs:string" />
+		        </xs:choice>
+        		<xs:attribute name= "PAIS" type= "xs:string" />
 				<xs:attribute name= "digitalProperty" type= "xs:string" />
 			</xs:extension>
 		</xs:complexContent>
@@ -233,7 +232,7 @@
 	
 	<xs:complexType name= "Method">
 		<xs:sequence>
-			<xs:element name= "Parameter" type= "Parameter"/> <!-- list of parameters and parameterValues; # of lists == # of methods -->
+			<xs:element name= "Parameter" type= "Parameter" minOccurs= "0" maxOccurs= "unbounded"/> <!-- list of parameters and parameterValues; # of lists == # of methods -->
 		</xs:sequence>
 		<xs:attribute name= "name" type= "xs:string"/>
 	</xs:complexType>
@@ -424,7 +423,39 @@
 			<xs:selector xpath= ".//EventsList/ProcessEvent/Analytics/AnalysesEvent" />
 			<xs:field xpath= ".//AnalysesEvent"/>
 		</xs:keyref>
+		
+		
+		<!-- Data entry-object constraints -->
+		
+		<xs:keyref name= "observationFeatureOfInterestIDRef" refer= "featureOfInterestIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Observation/FeatureOfInterest" />
+			<xs:field xpath= ".//FeatureOfInterest"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "observationObjectIDRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/IoTEvent/Observation/Object" />
+			<xs:field xpath= ".//Object"/>
+		</xs:keyref>
 
+		<xs:keyref name= "ISDataEntryDigitalObjectInContextEventIDRef" refer= "digitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/ISDataEntry/DigitalObject" />
+			<xs:field xpath= ".//digitalObject"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "ISDataEntryObjectIDInContextEventRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/ContextEvent/ISDataEntry/Object" />
+			<xs:field xpath= ".//Object"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "ISDataEntryDigitalObjectInProcessEventIDRef" refer= "digitalObjectIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/ISDataEntry/DigitalObject" />
+			<xs:field xpath= ".//digitalObject"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "ISDataEntryObjectIDInProcessEventRef" refer= "objectIDKey">
+			<xs:selector xpath= ".//EventsList/ProcessEvent/ISDataEntry/Object" />
+			<xs:field xpath= ".//Object"/>
+		</xs:keyref>
 
 		<!-- Data entry-data source constraints -->
 
@@ -466,10 +497,27 @@
 			<xs:field xpath= "@digitalPropertyInDigitalObject"/>
 		</xs:keyref>
 
-		<!-- <xs:keyref name= "ISDEPAISInProcessEventIDRef" refer= "PAISIDKey">
-			<xs:selector xpath= ".//EventsList/ProcessEvent/ISDataEntry" />
-			<xs:field xpath= "@PAIS"/>
-		</xs:keyref> -->
+		<!-- Property-Data source constraints -->
+		
+		<xs:keyref name= "observablePropertySensorInObjectIDRef" refer= "sensorIDKey">
+			<xs:selector xpath= ".//ObjectsList/Object/ObservableProperty" />
+			<xs:field xpath= "@monitoredBySensor"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "observablePropertySensorInFeatureOfInterestIDRef" refer= "sensorIDKey">
+			<xs:selector xpath= ".//ObjectsList/FeatureOfInterest/ObservableProperty" />
+			<xs:field xpath= "@monitoredBySensor"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "digitalPropertyPAISInObjectIDRef" refer= "PAISIDKey">
+			<xs:selector xpath= ".//ObjectsList/Object/DigitalProperty" />
+			<xs:field xpath= "@monitoredByPAIS"/>
+		</xs:keyref>
+		
+		<xs:keyref name= "digitalPropertyPAISInDigitalObjectIDRef" refer= "PAISIDKey">
+			<xs:selector xpath= ".//ObjectsList/DigitalObject/DigitalProperty" />
+			<xs:field xpath= "@monitoredByPAIS"/>
+		</xs:keyref>
 
 	</xs:element>
 </xs:schema>
